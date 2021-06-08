@@ -6,7 +6,7 @@ Function New-AzSHCIVM {
 
     New-VM `
         -Name $nodeName  `
-        -MemoryStartupBytes 24GB `
+        -MemoryStartupBytes 48GB `
         -SwitchName "NATSwitch" `
         -Path "D:\Hyper-V\" `
         -NewVHDPath "D:\Hyper-V\$nodeName\Virtual Hard Disks\$nodeName.vhdx" `
@@ -51,7 +51,7 @@ Function Confirm-AzSHCIVM {
     # Refer to earlier in the script for $nodeName and $newIP
     Invoke-Command -VMName $nodeName -Credential $global:azsHCILocalCreds -ScriptBlock {
         # Set Static IP
-        New-NetIPAddress -IPAddress "$using:newIP" -DefaultGateway "192.168.1.254" -InterfaceAlias "Ethernet" -PrefixLength "24" | Out-Null
+        New-NetIPAddress -IPAddress "$using:newIP" -DefaultGateway "192.168.1.254" -InterfaceAlias "Ethernet" -PrefixLength "16" | Out-Null
         Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses ("192.168.1.254")
         $nodeIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet" | Select-Object IPAddress
         Write-Verbose "The currently assigned IPv4 address for $using:nodeName is $($nodeIP.IPAddress)" -Verbose 
