@@ -6,7 +6,7 @@ Function New-AzSHCIVM {
 
     New-VM `
         -Name $nodeName  `
-        -MemoryStartupBytes 48GB `
+        -MemoryStartupBytes 64GB `
         -SwitchName "NATSwitch" `
         -Path "D:\Hyper-V\" `
         -NewVHDPath "D:\Hyper-V\$nodeName\Virtual Hard Disks\$nodeName.vhdx" `
