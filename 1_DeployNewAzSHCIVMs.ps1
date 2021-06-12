@@ -10,6 +10,7 @@ $AzSHCINodes += New-Object AzSHCINode("AZSHCINODE01","192.168.1.4")
 $AzSHCINodes += New-Object AzSHCINode("AZSHCINODE02","192.168.1.5")
 
 
+$VMMemory = "64GB"
 $VMPath = "D:\Hyper-V\"
 $AzSHCI_ISOPATH = "D:\ISOs\AzSHCI.iso"
 $VMSwitchName = "NatSwitch"
@@ -38,7 +39,7 @@ Function New-AzSHCIVM {
 
     New-VM `
         -Name $nodeName  `
-        -MemoryStartupBytes 64GB `
+        -MemoryStartupBytes $VMMemory `
         -SwitchName $VMSwitchName `
         -Path $VMPath `
         -NewVHDPath "$VMPath$nodeName\Virtual Hard Disks\$nodeName.vhdx" `
