@@ -1,4 +1,15 @@
 #config
+class AzSHCINode {
+    [string]$name
+    [string]$IPAddress
+    AzSHCINode($name, $IPAddress) { $this.name = $name; $this.IPAddress = $IPAddress}
+}
+
+$AzSHCINodes = @()
+$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE01","192.168.1.4")
+$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE02","192.168.1.5")
+
+
 $VMPath = "D:\Hyper-V\"
 $AzSHCI_ISOPATH = "D:\ISOs\AzSHCI.iso"
 $VMSwitchName = "NatSwitch"
@@ -129,16 +140,22 @@ function Remove-AzSHCIVM {
 
 }
 
+foreach($node in $AzSHCINodes) {
+    Write-Host "hoge"
+    Write-Verbose "Checking $($node.name)"
+    $vm = Get-VM $node.name -ErrorAction SilentlyContinue
+    If($null -ne $vm){
+        Write-Verbose "$($node.name) is present. Removing it..."
+        Remove-AzSHCIVM -nodeName $node.name
+    }
+}
 
 
-Remove-AzSHCIVM -nodeName "AZSHCINODE01"
-Remove-AzSHCIVM -nodeName "AZSHCINODE02"
+foreach($node in $AzSHCINodes) {
+    New-AzSHCIVM -nodeName $node.name -newIP $node.IPAddress
+}
 
-
-New-AzSHCIVM -nodeName "AZSHCINODE01" -newIP "192.168.1.4"
-New-AzSHCIVM -nodeName "AZSHCINODE02" -newIP "192.168.1.5"
-
-Read-Host "全台のVMにOSをインストールして初回ログイン～パスワード設定まで実行してから次に進む"
+Read-Host "Install OS. Change administrator's password. After that, Hit Enter!"
 
 # Define local credentials
 $global:azsHCILocalCreds = Get-Credential -UserName "Administrator" -Message "Enter the password used when you deployed the Azure Stack HCI 20H2 OS"
@@ -148,10 +165,9 @@ $domainName = "test.local"
 $domainAdmin = "$domainName\administrator"
 $global:domainCreds = Get-Credential -UserName "$domainAdmin" -Message "Enter the password for the Domain Administrator account"
 
-
-Confirm-AzSHCIVM -nodeName "AZSHCINODE01" -newIP "192.168.1.4"
-Confirm-AzSHCIVM -nodeName "AZSHCINODE02" -newIP "192.168.1.5"
-
+foreach($node in $AzSHCINodes) {
+    Confirm-AzSHCIVM -nodeName $node.name -newIP $node.IPAddress
+}
 
 
 
