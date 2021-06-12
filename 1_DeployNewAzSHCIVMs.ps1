@@ -10,7 +10,7 @@ $AzSHCINodes += New-Object AzSHCINode("AZSHCINODE01","192.168.1.4")
 $AzSHCINodes += New-Object AzSHCINode("AZSHCINODE02","192.168.1.5")
 
 
-$VMMemory = "64GB"
+$VMMemory = 64GB
 $VMPath = "D:\Hyper-V\"
 $AzSHCI_ISOPATH = "D:\ISOs\AzSHCI.iso"
 $VMSwitchName = "NatSwitch"
@@ -81,6 +81,11 @@ Function Confirm-AzSHCIVM {
         [string]$newIP
     )
     
+    while ((Invoke-Command -VMName $nodeName -Credential $global:azsHCILocalCreds {"Test"} -ErrorAction SilentlyContinue) -ne "Test") {
+        Start-Sleep -Seconds 1
+        Write-Host "Waiting for server to set passowrd."
+    }
+
     # Refer to earlier in the script for $nodeName and $newIP
     Invoke-Command -VMName $nodeName -Credential $global:azsHCILocalCreds -ScriptBlock {
         # Set Static IP
@@ -155,7 +160,6 @@ function Remove-AzSHCIVM {
 }
 
 foreach($node in $AzSHCINodes) {
-    Write-Host "hoge"
     Write-Verbose "Checking $($node.name)"
     $vm = Get-VM $node.name -ErrorAction SilentlyContinue
     If($null -ne $vm){
@@ -169,7 +173,7 @@ foreach($node in $AzSHCINodes) {
     New-AzSHCIVM -nodeName $node.name -newIP $node.IPAddress
 }
 
-Read-Host "Install OS. Change administrator's password. After that, Hit Enter!"
+#Read-Host "Install OS. Change administrator's password. After that, Hit Enter!"
 
 # Define local credentials
 $password = Get-Content $passwordFile | ConvertTo-SecureString
