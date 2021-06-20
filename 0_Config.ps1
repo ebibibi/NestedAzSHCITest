@@ -2,12 +2,14 @@
 class AzSHCINode {
     [string]$name
     [string]$IPAddress
-    AzSHCINode($name, $IPAddress) { $this.name = $name; $this.IPAddress = $IPAddress}
+    [string]$S2DIPAddress1
+    [string]$S2DIPAddress2
+    AzSHCINode($name, $IPAddress, $S2DIPAddress1, $S2DIPAddress2) { $this.name = $name; $this.IPAddress = $IPAddress; $this.S2DIPAddress1 = $S2DIPAddress1; $this.S2DIPAddress2 = $S2DIPAddress2;}
 }
 
 $AzSHCINodes = @()
-$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE01","192.168.1.4")
-$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE02","192.168.1.5")
+$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE01","192.168.1.4","10.10.1.1","10.10.2.1")
+$AzSHCINodes += New-Object AzSHCINode("AZSHCINODE02","192.168.1.5","10.10.1.2","10.10.2.2")
 
 
 $VMMemory = 64GB

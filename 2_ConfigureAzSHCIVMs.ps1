@@ -1,12 +1,17 @@
 param (
     [Parameter(Mandatory=$true)]
     [string]$nodeName,
-    [string]$IPAddress
+    [string]$IPAddress,
+    [string]$S2DIPAddress1,
+    [string]$S2DIPAddress2
 )
 
 Write-Host "Start 2_ConfigureAzSHCIVMs.ps1 for $($node.name)"
-Write-Verbose $nodeName
-Write-Verbose $IPAddress
+Write-Verbose $nodeName -Verbose
+Write-Verbose $IPAddress -Verbose
+Write-Verbose $S2DIPAddress1 -Verbose
+Write-Verbose $S2DIPAddress2 -Verbose
+
 
 
 $scriptPath = Split-Path -Parent ($MyInvocation.MyCommand.Path)
@@ -27,7 +32,9 @@ $global:domainCreds = New-Object System.Management.Automation.PSCredential "$dom
 Function Confirm-AzSHCIVM {
     param (
         [string]$nodeName,
-        [string]$newIP
+        [string]$newIPAddress,
+        [string]$S2DIPAddress1,
+        [string]$S2DIPAddress2
     )
     
     while ((Invoke-Command -VMName $nodeName -Credential $global:azsHCILocalCreds {"Test"} -ErrorAction SilentlyContinue) -ne "Test") {
@@ -35,10 +42,10 @@ Function Confirm-AzSHCIVM {
         Write-Host "Waiting for server to set passowrd."
     }
 
-    # Refer to earlier in the script for $nodeName and $newIP
+    # Refer to earlier in the script for $nodeName and $newIPAddress
     Invoke-Command -VMName $nodeName -Credential $global:azsHCILocalCreds -ScriptBlock {
         # Set Static IP
-        New-NetIPAddress -IPAddress "$using:newIP" -DefaultGateway "$using:defaultGateway" -InterfaceAlias "Ethernet" -PrefixLength "16" | Out-Null
+        New-NetIPAddress -IPAddress "$using:newIPAddress" -DefaultGateway "$using:defaultGateway" -InterfaceAlias "Ethernet" -PrefixLength "16" | Out-Null
         Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses ($using:DNSServer)
         $nodeIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet" | Select-Object IPAddress
         Rename-NetAdapter -Name "Ethernet" -NewName "Management"
@@ -96,8 +103,43 @@ Function Confirm-AzSHCIVM {
         Start-Sleep -Seconds 1
     }
     Write-Verbose "$nodeName is now online. Proceed to the next step...." -Verbose
+
+
+    Write-Verbose "Change NICs setting for S2D" -Verbose
+    Invoke-Command -VMName $nodeName -Credential $global:domainCreds -ScriptBlock {
+        # Changeing NIC name and Setting Static IP
+        Rename-NetAdapter -Name "Ethernet 2" -NewName "S2D NIC 1"
+        Rename-NetAdapter -Name "Ethernet 3" -NewName "S2D NIC 2"
+        
+        New-NetIPAddress -IPAddress "$using:S2DIPAddress1" -InterfaceAlias "S2D NIC 1" -PrefixLength "24" | Out-Null
+        New-NetIPAddress -IPAddress "$using:S2DIPAddress2" -InterfaceAlias "S2D NIC 2" -PrefixLength "16" | Out-Null
+        
+        $nodeIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "S2D NIC 1" | Select-Object IPAddress
+        Write-Verbose "The currently assigned IPv4 address for $using:nodeName [S2D NIC 1] is $($nodeIP.IPAddress)" -Verbose 
+
+        $nodeIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "S2D NIC 2" | Select-Object IPAddress
+        Write-Verbose "The currently assigned IPv4 address for $using:nodeName [S2D NIC 2] is $($nodeIP.IPAddress)" -Verbose 
+
+    }
+
+
+    Write-Verbose "Creating vSwitch..." -Verbose
+    Invoke-Command -VMName $nodeName -Credential $global:domainCreds -ScriptBlock {
+        #create vSwitch for vms
+        Rename-NetAdapter -Name "Ethernet 4" -NewName "vSwitch for VMs"
+        New-VMSwitch -Name "vSwitch for VMs" -NetAdapterName "vSwitch for VMs" -AllowManagementOS $false
+    }
+
+    # Test for the node to be back online and responding
+    while ((Invoke-Command -VMName $nodeName -Credential $global:domainCreds {"Test"} -ErrorAction SilentlyContinue) -ne "Test") {
+        Start-Sleep -Seconds 1
+    }
+    Write-Verbose "$nodeName is now online. Proceed to the next step...." -Verbose
+
+
 }
 
-Confirm-AzSHCIVM -nodeName $nodeName -newIP $IPAddress
+Confirm-AzSHCIVM -nodeName $nodeName -newIP $IPAddress -S2DIPAddress1 $S2DIPAddress1 -S2DIPAddress2 $S2DIPAddress2
+
 
 
