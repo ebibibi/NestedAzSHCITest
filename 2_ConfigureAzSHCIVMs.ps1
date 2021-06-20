@@ -41,6 +41,7 @@ Function Confirm-AzSHCIVM {
         New-NetIPAddress -IPAddress "$using:newIP" -DefaultGateway "$using:defaultGateway" -InterfaceAlias "Ethernet" -PrefixLength "16" | Out-Null
         Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses ($using:DNSServer)
         $nodeIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet" | Select-Object IPAddress
+        Rename-NetAdapter -Name "Ethernet" -NewName "Management"
         Write-Verbose "The currently assigned IPv4 address for $using:nodeName is $($nodeIP.IPAddress)" -Verbose 
     }
 
@@ -78,6 +79,11 @@ Function Confirm-AzSHCIVM {
     Invoke-Command -VMName $nodeName -Credential $global:domainCreds -ScriptBlock {
         # Enable the Hyper-V PowerShell within the Azure Stack HCI 20H2 OS
         Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell -All -NoRestart -Verbose
+        
+        # Enable Windows Features
+        Install-WindowsFeature -Name File-Services
+        Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
+        Install-WindowsFeature -Name Data-Center-Bridging
     }
 
     Write-Verbose "Rebooting node for changes to take effect" -Verbose
@@ -90,8 +96,8 @@ Function Confirm-AzSHCIVM {
         Start-Sleep -Seconds 1
     }
     Write-Verbose "$nodeName is now online. Proceed to the next step...." -Verbose
-
 }
 
-
 Confirm-AzSHCIVM -nodeName $nodeName -newIP $IPAddress
+
+
