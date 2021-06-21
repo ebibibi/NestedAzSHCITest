@@ -24,6 +24,7 @@ $DNSServer = "192.168.1.254"
 $domainname = "test.local"
 $AzSHCIClusterName = "AzSHCI"
 $AzSHCIClusterIPAddress = "192.168.1.100"
+$DCName = "ADCONNECTTEST"
 
 
 # Get Password

@@ -22,7 +22,7 @@ Write-Host "#-------------------------------------------------------------------
 Write-Host "Test-Cluster -Node $AzSHCINodesString –Include `"Storage Spaces Direct`", `"Inventory`", `"Network`", `"System Configuration`""
 Write-Host "Install-WindowsFeature RSAT-DNS-Server" 
 Write-Host "Install-WindowsFeature RSAT-AD-PowerShell" 
-Write-Host "try { `Remove-DnsServerResourceRecord -ZoneName $domainname -RRType A -Name $AzSHCIClusterName force } catch {}"
+Write-Host "try { `Remove-DnsServerResourceRecord -ComputerName $DCName -ZoneName $domainname -RRType A -Name $AzSHCIClusterName force } catch {}"
 Write-Host "try { `Remove-ADComputer -Identity $AzSHCIClusterName -Confirm:$false} catch {}"
 Write-Host "New-Cluster -Name $AzSHCIClusterName -StaticAddress $AzSHCIClusterIPAddress"
 Write-Host "#---------------------------------------------------------------------------"
