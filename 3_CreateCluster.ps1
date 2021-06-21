@@ -27,3 +27,5 @@ Write-Host "try { `Remove-ADComputer -Identity $AzSHCIClusterName -Confirm:$fals
 Write-Host "New-Cluster -Name $AzSHCIClusterName -StaticAddress $AzSHCIClusterIPAddress"
 Write-Host "Enable-ClusterStorageSpacesDirect -PoolFriendlyName S2DPool"
 Write-Host "#---------------------------------------------------------------------------"
+
+Read-Host
