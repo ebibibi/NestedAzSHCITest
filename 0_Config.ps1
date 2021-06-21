@@ -1,4 +1,7 @@
 #config
+
+
+
 class AzSHCINode {
     [string]$name
     [string]$IPAddress
@@ -19,6 +22,8 @@ $VMSwitchName = "NatSwitch"
 $defaultGateway = "192.168.1.254"
 $DNSServer = "192.168.1.254"
 $domainname = "test.local"
+$AzSHCIClusterName = "AzSHCI"
+$AzSHCIClusterIPAddress = "192.168.1.100"
 
 
 # Get Password
@@ -29,4 +34,27 @@ if((Test-Path $passwordFile) -eq $false){
     $credential.Password | ConvertFrom-SecureString | Set-Content $passwordFile
 } else {
     Write-Host "using password from $passwordFile ."
+}
+
+function WaitMultipleJobs($jobs){
+    Write-Host "Wait for these jobs"
+    get-job -Name "ConfigureAzSHCIVM*"
+    $runningJobsCount = 1
+
+    While($runningJobsCount -gt 0){
+        $runningJobsCount = 0
+        foreach($job in $jobs) {
+            if ($job.State -eq "Running") {
+                $runningJobsCount += 1
+                Write-Host ""
+                Write-Host "Job Name $($job.Name) : "
+                Receive-Job $job
+    
+            } elseif ($job.State -eq "Completed") {
+                Write-Host ""
+                Write-Host "Job Name $($job.Name) : Completed."
+            }
+            Start-Sleep 5
+        }
+    }
 }
