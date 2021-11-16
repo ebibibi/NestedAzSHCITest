@@ -1,7 +1,4 @@
 #config
-
-
-
 class AzSHCINode {
     [string]$name
     [string]$IPAddress
