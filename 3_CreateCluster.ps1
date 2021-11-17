@@ -24,7 +24,7 @@ Write-Host "Install-WindowsFeature RSAT-DNS-Server"
 Write-Host "Install-WindowsFeature RSAT-AD-PowerShell" 
 Write-Host "Remove-DnsServerResourceRecord -ComputerName $DCName -ZoneName $domainname -RRType A -Name $AzSHCIClusterName -force"
 Write-Host "Remove-ADComputer -Identity $AzSHCIClusterName -Confirm:`$false"
-Write-Host "New-Cluster -Name $AzSHCIClusterName -StaticAddress $AzSHCIClusterIPAddress"
+Write-Host "New-Cluster -Name $AzSHCIClusterName -StaticAddress $AzSHCIClusterIPAddress -Node $AzSHCINodesString"
 Write-Host "Enable-ClusterStorageSpacesDirect -PoolFriendlyName S2DPool"
 Write-Host "#---------------------------------------------------------------------------"
 
