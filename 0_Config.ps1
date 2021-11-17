@@ -23,12 +23,6 @@ $AzSHCIClusterName = "AzSHCI"
 $AzSHCIClusterIPAddress = "192.168.1.100"
 $DCName = "ADCONNECTTEST"
 
-# Trusted Hosts
-Write-Host "you have to allow connecting AZSHCINODEs by TrustedHosts"
-Write-Host "example:"
-Write-Host "winrm set winrm/config/client '@{TrustedHosts=`"*`"}'"
-Write-Host "winrm set winrm/config/client '@{TrustedHosts=`"xxx.xxx.xxx, yyy,yyy,yyy`"}'"
-
 # Get Password
 $passwordFile = Join-Path $env:TEMP "password.txt"
 if((Test-Path $passwordFile) -eq $false){
