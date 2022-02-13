@@ -19,7 +19,11 @@ Write-Host -ForegroundColor White -BackgroundColor DarkRed "Becareful! You have 
 
 Write-Host ""
 Write-Host "#---------------------------------------------------------------------------"
+Write-Host "#(English version)"
 Write-Host "Test-Cluster -Node $AzSHCINodesString –Include `"Storage Spaces Direct`", `"Inventory`", `"Network`", `"System Configuration`""
+Write-Host "or"
+Write-Host "#(Japanese version)"
+Write-Host "Test-Cluster -Node $AzSHCINodesString –Include `"記憶域スペース ダイレクト`", `"インベントリ`", `"ネットワーク`", `"システムの構成`""
 Write-Host "Install-WindowsFeature RSAT-DNS-Server" 
 Write-Host "Install-WindowsFeature RSAT-AD-PowerShell" 
 Write-Host "Remove-DnsServerResourceRecord -ComputerName $DCName -ZoneName $domainname -RRType A -Name $AzSHCIClusterName -force"
