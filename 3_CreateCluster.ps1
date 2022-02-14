@@ -14,7 +14,8 @@ $global:domainCreds = New-Object System.Management.Automation.PSCredential "$dom
 $AzSHCINodesString = $AzSHCINodes.name | join-string -Separator ','
 
 
-Write-Host -ForegroundColor White -BackgroundColor DarkBlue "Log in to the $($AzSHCINodes[0].name) and run the commands below."
+Write-Host -ForegroundColor White -BackgroundColor DarkBlue "Log in to the $($AzSHCINodes[0].name) by RDP and run the commands below."
+Write-Host -ForegroundColor White -BackgroundColor DarkBlue "I tried to automate this process by PowerShell Direct but I cloudn't. Maybe remote access rights problem."
 Write-Host -ForegroundColor White -BackgroundColor DarkRed "Becareful! You have to log in with domain administrator's account!"
 
 Write-Host ""

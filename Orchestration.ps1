@@ -29,7 +29,7 @@ WaitMultipleJobs($jobs)
 Write-Host "Execute 3_CreateCluster.ps1"
 #--------------------------------------------------------------------------
 $script = Join-Path $scriptPath "3_CreateCluster.ps1"
-. $script
+. $script -nodeName $AzSHCINodes[0].name
 
 
 
