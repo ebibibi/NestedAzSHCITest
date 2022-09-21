@@ -53,9 +53,13 @@ function Remove-AzSHCIVM {
         [string]$nodeName
     )
     try {
-        Stop-VM $nodeName -Force
-        Remove-VM $nodeName -Force
-        Remove-Item -Path "$VMPath$nodeName" -Recurse -Force
+        if($null -ne (Get-VM $nodeName)) {
+            Stop-VM $nodeName -Force
+            Remove-VM $nodeName -Force
+        }
+        if(Test-Path "$VMPath$nodeName") {
+            Remove-Item -Path "$VMPath$nodeName" -Recurse -Force
+        }
     }
     catch {
         
@@ -65,12 +69,8 @@ function Remove-AzSHCIVM {
 
 Write-Host "Remove VMs"
 foreach($node in $AzSHCINodes) {
-    Write-Verbose "Checking $($node.name)"
-    $vm = Get-VM $node.name -ErrorAction SilentlyContinue
-    If($null -ne $vm){
-        Write-Verbose "$($node.name) is present. Removing it..."
-        Remove-AzSHCIVM -nodeName $node.name
-    }
+    Write-Verbose "Try to remove $($node.name)..."
+    Remove-AzSHCIVM -nodeName $node.name -VMPath 
 }
 
 Write-Host "Create and Start VMs"
