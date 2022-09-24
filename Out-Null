@@ -1,7 +1,0 @@
-
-[91mGet-VM: [0mD:\repos\NestedAzSHCITest\1_DeployNewAzSHCIVMs.ps1:56:23
-[96mLine |
-[96m  56 | [0m         if($null -ne ([96mGet-VM $nodeName 2> Out-Null[0m)) {
-[96m     | [91m                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[91m[96m     | [91m"AZSHCINODE02" という名前の仮想マシンが見つかりません。
-[0m
