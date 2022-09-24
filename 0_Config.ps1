@@ -24,6 +24,8 @@ $AzSHCIClusterName = "AzSHCI"
 $AzSHCIClusterIPAddress = "192.168.1.100"
 $DCName = "ADCONNECTTEST"
 
+$SubscriptionID = "b0f2ddcb-c22b-4728-89b3-26e90a494ae4"
+
 # Get Password
 $passwordFile = Join-Path $env:TEMP "password.txt"
 if((Test-Path $passwordFile) -eq $false){
