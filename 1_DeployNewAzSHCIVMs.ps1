@@ -15,7 +15,7 @@ Function New-AzSHCIVM {
         -SwitchName $VMSwitchName `
         -Path $VMPath `
         -NewVHDPath "$VMPath$nodeName\Virtual Hard Disks\$nodeName.vhdx" `
-        -NewVHDSizeBytes 30GB `
+        -NewVHDSizeBytes 100GB `
         -Generation 2
 
     # Disable Dynamic Memory
