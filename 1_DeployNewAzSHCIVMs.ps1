@@ -53,7 +53,7 @@ function Remove-AzSHCIVM {
         [string]$nodeName
     )
     try {
-        if($null -ne (Get-VM $nodeName 2> Out-Null)) {
+        if($null -ne (Get-VM $nodeName 2> $null)) {
             Stop-VM $nodeName -Force
             Remove-VM $nodeName -Force
         }
