@@ -32,7 +32,7 @@ Function New-AzSHCIVM {
         Set-VMNetworkAdapter -VMName $nodeName -MacAddressSpoofing On -AllowTeaming On 
     }
     # Create the DATA virtual hard disks and attach them
-    $dataDrives = 1..4 | ForEach-Object { New-VHD -Path "$VMPath$nodeName\Virtual Hard Disks\DATA0$_.vhdx" -Dynamic -Size 100GB }
+    $dataDrives = 1..4 | ForEach-Object { New-VHD -Path "$VMPath$nodeName\Virtual Hard Disks\DATA0$_.vhdx" -Dynamic -Size 300GB }
     $dataDrives | ForEach-Object {
         Add-VMHardDiskDrive -Path $_.path -VMName $nodeName
     }
@@ -53,7 +53,7 @@ function Remove-AzSHCIVM {
         [string]$nodeName
     )
     try {
-        if($null -ne (Get-VM $nodeName)) {
+        if($null -ne (Get-VM $nodeName 2> Out-Null)) {
             Stop-VM $nodeName -Force
             Remove-VM $nodeName -Force
         }
